@@ -1,0 +1,22 @@
+before_script:
+  - apt-get update
+  - apt-get upgrade -y
+  - apt-get install -y bash
+  - apt-get install -y openssh-client
+  - apt-get install -y rsync
+
+update-server:
+  stage: deploy
+  only:
+    - master
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+  script:
+    - mkdir .ssh
+    - chmod 700 .ssh
+    - echo "$PRIV_KEY" | tr -d '\r' > .ssh/id_rsa
+    - chmod 600 .ssh/id_rsa
+    - bash ./update.bash
