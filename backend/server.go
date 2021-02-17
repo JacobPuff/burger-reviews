@@ -133,11 +133,10 @@ func FormatName(name string) string {
 }
 
 func (constants *Constants) handleAPI(writer http.ResponseWriter, request *http.Request) {
-	// DEV
-	fmt.Println(request.Host, "||", request.URL, "||", request.RequestURI, "||", request.RemoteAddr, "||", request.Referer())
 	if strings.Contains(request.Referer(), appconfig.HttpOrHttps+appconfig.ServerDomain) == false {
 		writer.WriteHeader(http.StatusForbidden)
 		writer.Write([]byte("Must be on same site"))
+		return
 	}
 	if request.Method == "POST" {
 		review := Review{}
@@ -207,26 +206,6 @@ func (constants *Constants) handleAPI(writer http.ResponseWriter, request *http.
 		if appconfig.DevMode != "prod" {
 			return
 		}
-		/*
-			TODO:
-				√ Finish error handling on backend (Probably in a separate function errorHandler(review) error)
-				√ Check groups on backend
-				√ Ask for group pass before showing submit form on frontend
-				√ Add errors for invalid/expired groups on dedicated endpoint
-				√ CSRF tokens
-					√ figure out how to store them
-						√ File or in RAM? (The answer is redis)
-						√ Figure out what redis-go library to use.
-						√ In redis I will have:
-							Ip address token count for IP A: 3
-							token used by IP A 1: CSRFToken
-							token used by IP A 2: CSRFToken
-					√ limit to N tokens per IP.
-				- Look into docker security (Solved with a mount. Which makes sense. Just was curious about other ways.)
-				√ Check request is from the same site that we are hosted on
-				???
-				Profit!
-		*/
 
 		stringDeliciousness := strconv.FormatFloat(*review.Deliciousness, 'f', 2, 64)
 		stringPrice := strconv.FormatFloat(*review.Price, 'f', 2, 64)
