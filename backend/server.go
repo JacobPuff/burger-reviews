@@ -366,6 +366,7 @@ func (constants *Constants) handleTokens(writer http.ResponseWriter, request *ht
 	if strings.Contains(request.Referer(), appconfig.HttpOrHttps+appconfig.ServerDomain) == false {
 		writer.WriteHeader(http.StatusForbidden)
 		writer.Write([]byte("Must be on same site"))
+		return
 	}
 	if request.Method == "GET" {
 		remoteIpAddress := strings.Split(request.RemoteAddr, ":")[0]
