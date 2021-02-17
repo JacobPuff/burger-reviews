@@ -706,7 +706,6 @@ function submitRequest(name, formattedName, price, deliciousness, group, token) 
             }
         }
         submitRequest.open("POST", window.location.pathname + "api")
-        submitRequest.setRequestHeader("Referer", window.location.origin)
         submitRequest.send(`{
             "name": "${name}",
             "formattedName": "${formattedName}",
@@ -769,7 +768,6 @@ function groupRequest(group, token) {
             }
         }
         groupRequest.open("PUT", window.location.pathname + "api")
-        groupRequest.setRequestHeader("Referer", window.location.origin)
         groupRequest.send(`{"group": "${group}", "token": "${token}"}`)
     })
 }
@@ -811,7 +809,6 @@ function getCSRFTokenRequest() {
             }
         }
         getTokenRequest.open("GET", window.location.pathname + "api/tokens")
-        getTokenRequest.setRequestHeader("Referer", window.location.origin)
         getTokenRequest.send()
     })
 }
@@ -841,41 +838,18 @@ function handleEnter(e) {
 }
 
 async function getData () {
-    var csvFile = await csvRequest().then((data)=>{
+    return d3.csv(window.location.pathname + "api", d3.autoType).then((data)=>{
         localStorage.setItem("dataGoneAlertOK", true)
         localStorage.setItem("gotNoResponseAlertOk", true)
-        return d3.csv.parse(csvFile, d3.autoType)
+        return data
     }).catch((error)=>{
-        console.log("GetData: Error from server ("+error.status+"): "+error.error)
+        console.log("ERROR", error)
         if (localStorage.getItem("dataGoneAlertOK") == "true") {
             alert("Couldn't get the data. Try reloading in a little bit.")
             localStorage.setItem("dataGoneAlertOK", false)
             localStorage.setItem("gotNoResponseAlertOk", false)
         }
         return []
-    })
-}
-
-    
-
-function csvRequest() {
-    return new Promise((resolve, reject)=>{
-        var getTokenRequest = new XMLHttpRequest()
-        getTokenRequest.onreadystatechange = () => {
-            if (getTokenRequest.readyState == XMLHttpRequest.DONE) {
-                if (getTokenRequest.status == 200) {
-                    resolve(getTokenRequest.responseText)
-                    return
-                } else if (getTokenRequest.status == 0) {
-                    return
-                }
-                reject({error:getTokenRequest.responseText, status: getTokenRequest.status})
-                return
-            }
-        }
-        getTokenRequest.open("GET", window.location.pathname + "api")
-        getTokenRequest.setRequestHeader("Referer", window.location.origin)
-        getTokenRequest.send()
     })
 }
 
