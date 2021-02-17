@@ -1,0 +1,87 @@
+body {
+    color: white;
+    font-family: sans-serif;
+}
+
+.websiteButton {
+    display: inline-block;
+    vertical-align: top;
+    background-color: #00284c;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid white;
+    color: white;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    margin-right: 10%;
+}
+
+.graphContainer {
+    width:1000px;
+    height:900px;
+    display: inline-block;
+}
+.graph {
+    background-color: #18181f
+}
+.inputContainer {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 50px;
+    margin-top: 20px;
+}
+
+.submitInputContainer {
+    width: 300px;
+    height: 300px;
+    background-color: #18181f;
+    border: 1px solid #0093bf;
+    border-radius: 10px;
+}
+
+.inputTitle {
+    font-size: 20px;
+}
+
+.inputSet {
+    width: 70%;
+    text-align: start;
+    margin: auto;
+    padding:5px
+}
+
+.submitButton {
+    background-color: #00284c;
+    color: white;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 10px;
+    border: 1px solid #0093bf;
+    border-radius: 5px;
+}
+
+.groupInputContainer {
+    display: inline-block;
+    vertical-align: top;
+    width: 300px;
+    height: 175px;
+    margin-top: 20px;
+    background-color: #18181f;
+    border: 1px solid #0093bf;
+    border-radius: 10px;
+}
+
+
+input {
+    margin-left: 10px;
+    margin-top: 5px;
+    padding: 5px;
+    background-color: #18181f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    border: 1px dashed #0093bf;
+    border-bottom: 1px solid #0093bf;
+    border-left: 1px solid #0093bf;
+}

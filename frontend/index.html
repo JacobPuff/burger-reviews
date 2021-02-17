@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Burger Reviews</title>
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+        <script src="graph stuff.js"></script>
+        <link rel="stylesheet" href="style.css"/>
+    </head>
+    <body style="background-color: black; text-align: center;" height="90%">
+        <div>
+            <button class="websiteButton" onclick="location.href = 'https://jacob.squizzlezig.com'">My website</button>
+            <span id="graphContainer" class="graphContainer"></span>
+            <div class="inputContainer">
+                <div id="submitInputContainer" class="submitInputContainer" style="display: none;">
+                    <p class="inputTitle">Submit a review!</p>
+                    <div class="inputSet">
+                        <label for="burgerJointName" style="color: white;">Name of burger joint:</label>
+                        <input type="text" id="burgerJointName" name="burgerJointName"/>
+                    </div>
+                    <div class="inputSet">
+                        <label for="burgerJointPrice" style="color: white;">Price: </label>
+                        <span style="font-size: 11px; margin-left: 50%;">(ex. 2.99)</span>
+                        <input type="text" id="burgerJointPrice" name="burgerJointPrice"/>
+                    </div>
+                    <div class="inputSet">
+                        <label for="burgerJointDeliciousness" style="color: white;">Delciousness:</label>
+                    <input type="text" id="burgerJointDeliciousness" name="burgerJointDeliciousness"/>
+                    </div>
+                    <button class="submitButton" onclick="checkAndSubmitReview()">Submit</button>
+                </div>
+                
+                <div id="groupInputContainer" class="groupInputContainer">
+                    <p id="groupLoadingTitle" class="inputTitle">Enter your group's name here</p>
+                    <div class="inputSet">
+                        <label for="groupNameInput" style="color: white;">Group name:</label>
+                        <input type="text" id="groupNameInput" name="groupNameInput"/>
+                    </div>
+                    <button class="submitButton" onclick="handleGroupCheck()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

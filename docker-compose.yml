@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  burger-reviews-redis:
+    image: redis:6.0.10
+    volumes:
+      - "./redis.conf:/usr/local/etc/redis/redis.conf"
+  burger-reviews:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVER_DOMAIN=jacob.squizzlezig.com
+      - SERVER_PORT=8080
+      - REDIS_HOST=burger-reviews-redis
+      - DEV_MODE=dev
+    volumes:
+      - "./constants.json:/app/backend/constants.json"
+    links:
+      - "burger-reviews-redis"
+    depends_on:
+      - "burger-reviews-redis"
