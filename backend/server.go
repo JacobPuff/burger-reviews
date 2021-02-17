@@ -75,11 +75,11 @@ func main() {
 		ReadHeaderTimeout: 1 * time.Second,
 	}
 	fileServer := http.FileServer(http.Dir(appconfig.FrontendDir))
-	http.Handle("/burgerreviews", fileServer)
+	http.Handle(appconfig.ServeOnPath+"/", http.StripPrefix(appconfig.ServeOnPath, fileServer))
 
-	http.HandleFunc("/burgerreviews/api/tokens", constants.handleTokens)
-	http.HandleFunc("/burgerreviews/api", constants.handleAPI)
-	fmt.Println("Running on", appconfig.ServerPort)
+	http.HandleFunc(appconfig.ServeOnPath+"/api/tokens", constants.handleTokens)
+	http.HandleFunc(appconfig.ServeOnPath+"/api", constants.handleAPI)
+	fmt.Println("Running on port", appconfig.ServerPort, "at path", appconfig.ServeOnPath)
 	log.Fatal(httpServer.ListenAndServe())
 }
 
@@ -133,8 +133,7 @@ func FormatName(name string) string {
 }
 
 func (constants *Constants) handleAPI(writer http.ResponseWriter, request *http.Request) {
-	fmt.Println(request.Host, "||", request.URL, "||", request.RequestURI, "||", request.RemoteAddr, "||", request.Referer())
-	if strings.Contains(request.Referer(), appconfig.HttpOrHttps+appconfig.ServerDomain) == false {
+	if request.Referer() != "" && strings.Contains(request.Referer(), appconfig.HttpOrHttps+appconfig.ServerDomain) == false {
 		writer.WriteHeader(http.StatusForbidden)
 		writer.Write([]byte("Must be on same site"))
 		return
@@ -364,7 +363,7 @@ func ReviewErrorHandler(constants *Constants, review Review) error {
 }
 
 func (constants *Constants) handleTokens(writer http.ResponseWriter, request *http.Request) {
-	if strings.Contains(request.Referer(), appconfig.HttpOrHttps+appconfig.ServerDomain) == false {
+	if request.Referer() != "" && strings.Contains(request.Referer(), appconfig.HttpOrHttps+appconfig.ServerDomain) == false {
 		writer.WriteHeader(http.StatusForbidden)
 		writer.Write([]byte("Must be on same site"))
 		return
