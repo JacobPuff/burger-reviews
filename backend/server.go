@@ -133,6 +133,7 @@ func FormatName(name string) string {
 }
 
 func (constants *Constants) handleAPI(writer http.ResponseWriter, request *http.Request) {
+	fmt.Println(request.Host, "||", request.URL, "||", request.RequestURI, "||", request.RemoteAddr, "||", request.Referer())
 	if strings.Contains(request.Referer(), appconfig.HttpOrHttps+appconfig.ServerDomain) == false {
 		writer.WriteHeader(http.StatusForbidden)
 		writer.Write([]byte("Must be on same site"))
@@ -370,6 +371,9 @@ func (constants *Constants) handleTokens(writer http.ResponseWriter, request *ht
 	}
 	if request.Method == "GET" {
 		remoteIpAddress := strings.Split(request.RemoteAddr, ":")[0]
+		if request.Header.Get("X-Forwarded-For") != "" {
+			remoteIpAddress = request.Header.Get("X-Forwarded-For")
+		}
 		redisConn, err := constants.RedisConnPool.Dial()
 		if err != nil {
 			fmt.Println("ERROR (handleTokens0):", err.Error())
