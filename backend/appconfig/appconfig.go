@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-var DevMode = getEnvOrDefault("DEV_MODE", "dev")
+var DevMode = getEnvOrDefault("BURGER_REVIEWS_DEV_MODE", "dev")
 var TokenExpireTime = getEnvOrDefault("TOKEN_EXPIRE_TIME", "1m")
 var MaxTokensPerIP, _ = strconv.Atoi(getEnvOrDefault("MAX_TOKENS_PER_IP", "100"))
 var HttpOrHttps = getHttpOrHttpsValue(getEnvOrDefault("IS_HTTPS", "true"))
