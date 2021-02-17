@@ -79,7 +79,7 @@ func main() {
 
 	http.HandleFunc(appconfig.ServeOnPath+"/api/tokens", constants.handleTokens)
 	http.HandleFunc(appconfig.ServeOnPath+"/api", constants.handleAPI)
-	fmt.Println("Running on port", appconfig.ServerPort, "at path", appconfig.ServeOnPath)
+	fmt.Println("Running on port", appconfig.ServerPort, ", at path", appconfig.ServeOnPath, ", in", appconfig.DevMode, "mode.")
 	log.Fatal(httpServer.ListenAndServe())
 }
 
