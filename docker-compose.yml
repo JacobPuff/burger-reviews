@@ -9,10 +9,20 @@ services:
     ports:
       - "9090:9090"
     environment:
-      - SERVER_DOMAIN=jacob.squizzlezig.com
-      - SERVER_PORT=9090
-      - REDIS_HOST=burger-reviews-redis
-      - DEV_MODE=dev
+      - DEV_MODE=${DEV_MODE}
+      - TOKEN_EXPIRE_TIME=${TOKEN_EXPIRE_TIME}
+      - MAX_TOKENS_PER_IP=${MAX_TOKENS_PER_IP}
+      - IS_HTTPS=${IS_HTTPS}
+      - SERVER_DOMAIN=${SERVER_DOMAIN}
+      - SERVER_PORT=${SERVER_PORT}
+      - SERVE_ON_PATH=${SERVE_ON_PATH}
+      - CONSTANTS_PATH=${CONSTANTS_PATH}
+      - FRONTEND_DIR=${FRONTEND_DIR}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_USER=${REDIS_USER}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_DB=${REDIS_DB}
     volumes:
       - "./constants.json:/app/backend/constants.json"
     links:
