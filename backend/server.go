@@ -134,7 +134,7 @@ func FormatName(name string) string {
 
 func (constants *Constants) handleAPI(writer http.ResponseWriter, request *http.Request) {
 	if request.Referer() != "" && strings.Contains(request.Referer(), appconfig.HttpOrHttps+appconfig.ServerDomain) == false {
-		fmt.Println("API referrer denied at", request.Referer())
+		fmt.Println("API referrer denied:", request.Referer())
 		writer.WriteHeader(http.StatusForbidden)
 		writer.Write([]byte("Must be on same site"))
 		return
@@ -365,7 +365,7 @@ func ReviewErrorHandler(constants *Constants, review Review) error {
 
 func (constants *Constants) handleTokens(writer http.ResponseWriter, request *http.Request) {
 	if request.Referer() != "" && strings.Contains(request.Referer(), appconfig.HttpOrHttps+appconfig.ServerDomain) == false {
-		fmt.Println("TOKENS referrer denied at", request.Referer())
+		fmt.Println("TOKENS referrer denied:", request.Referer())
 		writer.WriteHeader(http.StatusForbidden)
 		writer.Write([]byte("Must be on same site"))
 		return
