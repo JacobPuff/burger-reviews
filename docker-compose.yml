@@ -14,7 +14,7 @@ services:
       - REDIS_HOST=burger-reviews-redis
       - DEV_MODE=dev
     volumes:
-      - "./constants.json:/app/backend/constants.json"
+      - "./burger-reviews/constants.json:/app/backend/constants.json"
     links:
       - "burger-reviews-redis"
     depends_on:
