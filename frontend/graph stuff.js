@@ -705,7 +705,7 @@ function submitRequest(name, formattedName, price, deliciousness, group, token) 
                 return
             }
         }
-        submitRequest.open("POST", window.location.pathname + "/api")
+        submitRequest.open("POST", window.location.pathname + "api")
         submitRequest.setRequestHeader("Referer", window.location.origin)
         submitRequest.send(`{
             "name": "${name}",
@@ -768,7 +768,7 @@ function groupRequest(group, token) {
                 return
             }
         }
-        groupRequest.open("PUT", window.location.pathname + "/api")
+        groupRequest.open("PUT", window.location.pathname + "api")
         groupRequest.setRequestHeader("Referer", window.location.origin)
         groupRequest.send(`{"group": "${group}", "token": "${token}"}`)
     })
@@ -810,7 +810,7 @@ function getCSRFTokenRequest() {
                 return
             }
         }
-        getTokenRequest.open("GET", window.location.pathname + "/api/tokens")
+        getTokenRequest.open("GET", window.location.pathname + "api/tokens")
         getTokenRequest.setRequestHeader("Referer", window.location.origin)
         getTokenRequest.send()
     })
@@ -873,7 +873,7 @@ function csvRequest() {
                 return
             }
         }
-        getTokenRequest.open("GET", window.location.pathname + "/api")
+        getTokenRequest.open("GET", window.location.pathname + "api")
         getTokenRequest.setRequestHeader("Referer", window.location.origin)
         getTokenRequest.send()
     })
