@@ -853,7 +853,8 @@ async function getData () {
     })
 }
 
-window.onload = () => {
+window.addEventListener("load", onload)
+var onload = () => {
     document.getElementById("submitInputContainer").addEventListener('keydown', handleEnter)
     document.getElementById("groupInputContainer").addEventListener('keydown', handleGroupEnter)
     localStorage.setItem("dataGoneAlertOK", true)
