@@ -3,7 +3,7 @@
 This takes burger reviews and makes a graph.
 
 > ## Setup
-I suggest using `docker-compose`, but it's possible to use this without it. You can create a google form and link it so a spreadsheet, which is the way I did it. Below in the constants.json section it explains how to get the urls you'll need for that. The env vars are usefull for customization, and they allow for easy setup. Make a copy of `constants-example.json` and name it `constants.json`.
+I suggest using `docker-compose`, but it's possible to use this without it. You can create a google form and link it so a spreadsheet, which is the way I did it. Below in the constants.json section it explains how to get the urls you'll need for that. The env vars are usefull for customization, and they allow for easy setup. Make a copy of `constants-example.json`, name it `constants.json`, and put it in the same directory.
 > ## Env vars
 #### BURGER_REVIEWS_DEV_MODE
 Sets dev mode to either dev or prod. If it's not prod it treats the value as dev. The default is `dev`.
