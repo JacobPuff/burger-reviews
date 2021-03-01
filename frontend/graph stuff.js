@@ -91,6 +91,9 @@ var main = async () => {
                         .ease(d3.easeQuadInOut)
                         .attr("opacity", 1)
                 })
+                .on("click", () => {
+                    fillBurgerJointName(d["display name"])
+                })
 
             var text = point.append("text")
                 .attr("fill", "white")
@@ -426,6 +429,9 @@ var main = async () => {
                     .attr("cx", -60-TOOLTIP_ARROW_OFFSET/2)
                     .attr("cy", TOOLTIP_TEXT_OFFSET+TOOLTIP_TEXT_JUMP*0-(TOOLTIP_HEIGHT/2)+TOOLTIP_HEIGHT*index-5)
                     .attr("r", CIRCLE_RADIUS)
+                    .on("click", () => {
+                        fillBurgerJointName(point["display name"])
+                    })
                 multiPointTooltip.append("text")
                     .attr("fill", "white")
                     .attr("x",-50-TOOLTIP_ARROW_OFFSET/2)
@@ -684,6 +690,11 @@ async function checkAndSubmitReview() {
         alert(GENERIC_ERROR_MESSAGE)
     })
 
+}
+
+function fillBurgerJointName(name) {
+    console.log("NAME CLICKED",name)
+    d3.select("#burgerJointName").property("value", name)
 }
 
 function submitRequest(name, formattedName, price, deliciousness, group, token) {
