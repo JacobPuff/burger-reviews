@@ -97,6 +97,7 @@ var main = async () => {
                 .attr("x", namePos(d.price)*d['display name'].length)
                 .attr("y", -7)
                 .attr("opacity", 1)
+                .attr("pointer-events", "none")
                 .text(d["display name"])
         })
     }
@@ -251,6 +252,7 @@ var main = async () => {
                 .attr("x", namePos(d.price)*d['display name'].length)
                 .attr("y", -7)
                 .attr("opacity", 1)
+                .attr("pointer-events", "none")
                 .text(d["display name"])
         })
     }
