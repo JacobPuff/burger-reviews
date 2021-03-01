@@ -30,6 +30,7 @@ type Constants struct {
 		FormattedName string `json:"formatted name"`
 		Deliciousness string `json:"deliciousness"`
 		Price         string `json:"price"`
+		Size          string `json:"size"`
 		Group         string `json:"group"`
 	} `json:"fields"`
 	Groups        []string        `json:"groups"`
@@ -56,6 +57,7 @@ type Review struct {
 	FormattedName string   `json:"formattedName"`
 	Deliciousness *float64 `json:"deliciousness"`
 	Price         *float64 `json:"price"`
+	Size          string   `json:"size"`
 	Group         string   `json:"group"`
 	Token         string   `json:"token"`
 }
@@ -223,6 +225,7 @@ func (constants *Constants) handleAPI(writer http.ResponseWriter, request *http.
 		queryParams.Add(constants.FormFields.FormattedName, review.FormattedName)
 		queryParams.Add(constants.FormFields.Deliciousness, stringDeliciousness)
 		queryParams.Add(constants.FormFields.Price, stringPrice)
+		queryParams.Add(constants.FormFields.Size, review.Size)
 		queryParams.Add(constants.FormFields.Group, groupIndex)
 		fullFormUrl.RawQuery = queryParams.Encode()
 
@@ -316,9 +319,22 @@ func (constants *Constants) handleAPI(writer http.ResponseWriter, request *http.
 }
 
 func ReviewErrorHandler(constants *Constants, review Review) error {
-	if review.Name == "" || review.FormattedName == "" ||
-		review.Price == nil || review.Deliciousness == nil || review.Group == "" {
-		return errors.New("Can't have empty fields. Must have name, formattedName, deliciousness, price, and group.")
+	var sizeOptions = []string{
+		"unknown",
+		"less than 1/4 lbs",
+		"1/4 lbs",
+		"1/3 lbs",
+		"1/2 lbs",
+		"2/3 lbs",
+		"3/4 lbs",
+		"1 lbs",
+		"more than 1 lbs",
+	}
+	var stringSizeOptions = fmt.Sprintf(`["%s"]`, strings.Join(sizeOptions, `", "`))
+
+	if review.Name == "" || review.FormattedName == "" || review.Price == nil ||
+		review.Deliciousness == nil || review.Size == "" || review.Group == "" {
+		return errors.New("Can't have empty fields. Must have name, formattedName, deliciousness, price, size, and group.")
 	}
 
 	if FormatName(review.Name) != review.FormattedName {
@@ -358,6 +374,10 @@ func ReviewErrorHandler(constants *Constants, review Review) error {
 	}
 	if review.FormattedName != "Mom's Cooking" && (*review.Deliciousness < 0 || *review.Deliciousness > 100) {
 		return errors.New("Deliciousness must be between 0 and 100.")
+	}
+
+	if IndexInStringArray(review.Size, sizeOptions) == -1 {
+		return fmt.Errorf("Size must be of options %s", stringSizeOptions)
 	}
 
 	return nil

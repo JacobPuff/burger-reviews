@@ -1,12 +1,25 @@
 const GENERIC_ERROR_MESSAGE = "An error occured. Please try again in a bit."
 const NO_RESPONSE_ERROR_MESSAGE = "Got no response from the server. Please try again in a bit."
+const SIZE_TO_NUM_MAP = {
+    "": 0,
+    "null": 0,
+    "unknown": 0,
+    "less than 1/4 lbs": 0.5,
+    "1/4 lbs": 1,
+    "1/3 lbs": 1.5,
+    "1/2 lbs": 2,
+    "2/3 lbs": 2.5,
+    "3/4 lbs": 3,
+    "1 lbs": 3.5,
+    "more than 1 lbs": 4,
+}
 var main = async () => {
     const MARGIN = {top:50, right:40, bottom:50, left:55}
     const WIDTH = 1000
     const HEIGHT = 900
     const YAXIS_OFFSET = 15
-    const CIRCLE_RADIUS = 5
-    const SQUARE_SIZE = 9
+    const BASE_CIRCLE_RADIUS = 5
+    const BASE_SQUARE_SIZE = 9
     const TOOLTIP_Y_OFFSET = 45
     const TOOLTIP_X_OFFSET = 75
     const TOOLTIP_TEXT_OFFSET = 17
@@ -27,14 +40,17 @@ var main = async () => {
             data.push({...d, reviews: 1})
             if (d['formatted name'] == "Mom's Cooking") {
                 data[data.length-1].reviews = "∞"
+                data[data.length-1].size = 5
             }
         } else if (d['formatted name'] != "Mom's Cooking") {
             dataIndex = nameDict[d["formatted name"]]
             data[dataIndex].price = (data[dataIndex].price*data[dataIndex].reviews)+d.price;
             data[dataIndex].deliciousness = (data[dataIndex].deliciousness*data[dataIndex].reviews)+d.deliciousness
+            data[dataIndex].size = (data[dataIndex].size*data[dataIndex].reviews)+SIZE_TO_NUM_MAP[d.size]
             data[dataIndex].reviews += 1
             data[dataIndex].price /= data[dataIndex].reviews;
             data[dataIndex].deliciousness /= data[dataIndex].reviews;
+            data[dataIndex].size /= data[dataIndex].reviews;
         }
     })
 
@@ -64,7 +80,7 @@ var main = async () => {
                 .attr("transform", `translate(${xValues(d.price)},${yValues(d.deliciousness)})`)
             var circle = point.append("circle")
                 .attr("fill", getColorForData(d, nameDict, colorScale, colorValues))
-                .attr("r", CIRCLE_RADIUS)
+                .attr("r", BASE_CIRCLE_RADIUS + d.size)
                 .attr("stroke", "white")
                 .attr("stroke-width", 1)
                 .attr("cx", 0)
@@ -98,7 +114,7 @@ var main = async () => {
             var text = point.append("text")
                 .attr("fill", "white")
                 .attr("x", namePos(d.price)*d['display name'].length)
-                .attr("y", -7)
+                .attr("y", -7 - d.size)
                 .attr("opacity", 1)
                 .attr("pointer-events", "none")
                 .text(d["display name"])
@@ -185,10 +201,12 @@ var main = async () => {
         var d = data[i]
         var workingX = xValues(d.price)
         var workingY = yValues(d.deliciousness)
+        var workingSize = d.size
         var multiPoint = {
             "display name": d['display name'],
             price: d.price,
             deliciousness: d.deliciousness,
+            size: d.size,
             points: [d]
         }
         var newData = []
@@ -196,13 +214,15 @@ var main = async () => {
             if (i != i2) {
                 var xDistance = Math.abs(workingX-xValues(d2.price))
                 var yDistance = Math.abs(workingY-yValues(d2.deliciousness))
-                if (Math.sqrt(xDistance*xDistance+yDistance*yDistance) < CIRCLE_RADIUS*2) {
-                    workingX = (workingX+xValues(d2.price))/2
-                    workingY = (workingY+yValues(d2.deliciousness))/2
-                    
+                if (Math.sqrt(xDistance*xDistance+yDistance*yDistance) < BASE_CIRCLE_RADIUS*2+Math.abs(workingSize-d2.size)) {
+                    workingX = (workingX*multiPoint.points.length + xValues(d2.price))/(multiPoint.points.length+1)
+                    workingY = (workingY*multiPoint.points.length + yValues(d2.deliciousness))/(multiPoint.points.length+1)
+                    workingSize = (multiPoint.size*multiPoint.points.length + d2.size)/(multiPoint.points.length+1)
+
                     multiPoint['display name'] += " and "+d2['display name']
                     multiPoint.price = (multiPoint.price*multiPoint.points.length + d2.price)/(multiPoint.points.length+1)
                     multiPoint.deliciousness = (multiPoint.deliciousness*multiPoint.points.length + d2.deliciousness)/(multiPoint.points.length+1)
+                    multiPoint.size = workingSize
                     multiPoint.points.push(d2)
                 } else {
                     newData.push(d2)
@@ -221,12 +241,12 @@ var main = async () => {
                 .attr("transform", `translate(${xValues(d.price)},${yValues(d.deliciousness)})`)
             var rect = multiPoint.append("rect")
                 .attr("fill", getColorForData(d.points[0], nameDict, colorScale, colorValues))
-                .attr("width", SQUARE_SIZE)
-                .attr("height", SQUARE_SIZE)
+                .attr("width", BASE_SQUARE_SIZE + d.size)
+                .attr("height", BASE_SQUARE_SIZE + d.size)
                 .attr("stroke", "white")
                 .attr("stroke-width", 1)
-                .attr("x", -4)
-                .attr("y", -4)
+                .attr("x", -BASE_SQUARE_SIZE/2 - d.size/2)
+                .attr("y", -BASE_SQUARE_SIZE/2 - d.size/2)
                 .on("mouseover", () => {
                     svg.select(`#multiPointTooltip${i}`).transition()
                         .duration(250)
@@ -253,7 +273,7 @@ var main = async () => {
             var text = multiPoint.append("text")
                 .attr("fill", "white")
                 .attr("x", namePos(d.price)*d['display name'].length)
-                .attr("y", -7)
+                .attr("y", -7 - d.size/2)
                 .attr("opacity", 1)
                 .attr("pointer-events", "none")
                 .text(d["display name"])
@@ -427,14 +447,14 @@ var main = async () => {
                     .attr("stroke", "white")
                     .attr("stroke-width", 1)
                     .attr("cx", -60-TOOLTIP_ARROW_OFFSET/2)
-                    .attr("cy", TOOLTIP_TEXT_OFFSET+TOOLTIP_TEXT_JUMP*0-(TOOLTIP_HEIGHT/2)+TOOLTIP_HEIGHT*index-5)
-                    .attr("r", CIRCLE_RADIUS)
+                    .attr("cy", TOOLTIP_TEXT_OFFSET+TOOLTIP_TEXT_JUMP*0-(TOOLTIP_HEIGHT/2)+TOOLTIP_HEIGHT*index-5 - point.size)
+                    .attr("r", BASE_CIRCLE_RADIUS + point.size)
                     .on("click", () => {
                         fillBurgerJointName(point["display name"])
                     })
                 multiPointTooltip.append("text")
                     .attr("fill", "white")
-                    .attr("x",-50-TOOLTIP_ARROW_OFFSET/2)
+                    .attr("x",-50-TOOLTIP_ARROW_OFFSET/2 + point.size)
                     .attr("y",TOOLTIP_TEXT_OFFSET+TOOLTIP_TEXT_JUMP*0-(TOOLTIP_HEIGHT/2)+TOOLTIP_HEIGHT*index)
                     .text(`Name: ${point['display name']}`)
                 multiPointTooltip.append("text")
@@ -597,6 +617,7 @@ async function checkAndSubmitReview() {
     var price = parseFloat(rawPrice)
     var rawDeliciousness = d3.select("#burgerJointDeliciousness").property("value")
     var deliciousness = parseFloat(rawDeliciousness)
+    var size = d3.select("#burgerJointBurgerSize").property("value")
     var group = localStorage.getItem("group")
 
     if (!group) {
@@ -633,6 +654,10 @@ async function checkAndSubmitReview() {
     }
     if (name.length < 3) {
         alert("Name must be 3 or more characters.")
+        return
+    }
+    if (SIZE_TO_NUM_MAP[size] == undefined) {
+        alert("This size hasn't been accounted for. Please contact the site owner.")
         return
     }
     if (formattedName == "Mom's Cooking" && (price != 0 || deliciousness != 110)) {
@@ -672,7 +697,7 @@ async function checkAndSubmitReview() {
     if (token == "") {
         return
     }
-    submitRequest(name, formattedName, price, deliciousness, group, token)
+    submitRequest(name, formattedName, price, deliciousness, size, group, token)
     .then(()=>{
         if (localStorage.getItem(formattedName)) {
             localStorage.setItem(formattedName, parseInt(localStorage.getItem(formattedName)) + 1)
@@ -693,11 +718,10 @@ async function checkAndSubmitReview() {
 }
 
 function fillBurgerJointName(name) {
-    console.log("NAME CLICKED",name)
     d3.select("#burgerJointName").property("value", name)
 }
 
-function submitRequest(name, formattedName, price, deliciousness, group, token) {
+function submitRequest(name, formattedName, price, deliciousness, size, group, token) {
     return new Promise((resolve, reject)=>{
         var submitRequest = new XMLHttpRequest()
         submitRequest.onreadystatechange = () => {
@@ -724,6 +748,7 @@ function submitRequest(name, formattedName, price, deliciousness, group, token) 
             "formattedName": "${formattedName}",
             "price": ${price},
             "deliciousness": ${deliciousness},
+            "size": "${size}",
             "group": "${group}",
             "token": "${token}"
         }`)

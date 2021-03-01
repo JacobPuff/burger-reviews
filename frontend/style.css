@@ -36,7 +36,7 @@ body {
 
 .submitInputContainer {
     width: 300px;
-    height: 300px;
+    height: 355px;
     background-color: #18181f;
     border: 1px solid #0093bf;
     border-radius: 10px;
@@ -77,6 +77,21 @@ body {
 
 
 input {
+    width: 180px;
+    margin-left: 10px;
+    margin-top: 5px;
+    padding: 5px;
+    background-color: #18181f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    border: 1px dashed #0093bf;
+    border-bottom: 1px solid #0093bf;
+    border-left: 1px solid #0093bf;
+}
+
+select {
+    width: 190px;
     margin-left: 10px;
     margin-top: 5px;
     padding: 5px;
