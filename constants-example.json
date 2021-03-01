@@ -1,8 +1,16 @@
 {
     "prodSheetsCsvUrl": "",
     "devSheetsCsvUrl": "",
-    "formUrl": "",
-    "fields": {
+    "prodFormUrl": "",
+    "devFormUrl": "",
+    "prodFields": {
+        "display name": "",
+        "formatted name": "",
+        "deliciousness": "",
+        "price": "",
+        "group": ""
+    },
+    "devFields": {
         "display name": "",
         "formatted name": "",
         "deliciousness": "",

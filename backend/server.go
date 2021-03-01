@@ -21,22 +21,26 @@ import (
 	appconfig "jacob.squizzlezig.com/burger-reviews/appconfig"
 )
 
+type FormFields struct {
+	DisplayName   string `json:"display name"`
+	FormattedName string `json:"formatted name"`
+	Deliciousness string `json:"deliciousness"`
+	Price         string `json:"price"`
+	Size          string `json:"size"`
+	Group         string `json:"group"`
+}
+
 type Constants struct {
-	ProdSheetsCsvUrl string `json:"prodSheetsCsvUrl"`
-	DevSheetsCsvUrl  string `json:"devSheetsCsvUrl"`
-	FormUrl          string `json:"formUrl"`
-	FormFields       struct {
-		DisplayName   string `json:"display name"`
-		FormattedName string `json:"formatted name"`
-		Deliciousness string `json:"deliciousness"`
-		Price         string `json:"price"`
-		Size          string `json:"size"`
-		Group         string `json:"group"`
-	} `json:"fields"`
-	Groups        []string        `json:"groups"`
-	ActiveGroups  []string        `json:"activeGroups"`
-	RedisConnPool *redis.Pool     `json:"-"`
-	RedisCtx      context.Context `json:"-"`
+	ProdSheetsCsvUrl string          `json:"prodSheetsCsvUrl"`
+	DevSheetsCsvUrl  string          `json:"devSheetsCsvUrl"`
+	ProdFormUrl      string          `json:"prodFormUrl"`
+	DevFormUrl       string          `json:"devFormUrl"`
+	ProdFormFields   FormFields      `json:"prodFields"`
+	DevFormFields    FormFields      `json:"devFields"`
+	Groups           []string        `json:"groups"`
+	ActiveGroups     []string        `json:"activeGroups"`
+	RedisConnPool    *redis.Pool     `json:"-"`
+	RedisCtx         context.Context `json:"-"`
 }
 
 type GroupValidation struct {
@@ -206,14 +210,19 @@ func (constants *Constants) handleAPI(writer http.ResponseWriter, request *http.
 			return
 		}
 
-		if appconfig.DevMode != "prod" {
+		if appconfig.DevMode != "prod" && constants.DevFormUrl == "" {
 			return
 		}
 
 		stringDeliciousness := strconv.FormatFloat(*review.Deliciousness, 'f', 2, 64)
 		stringPrice := strconv.FormatFloat(*review.Price, 'f', 2, 64)
 
-		fullFormUrl, err := url.Parse(constants.FormUrl)
+		var fullFormUrl *url.URL
+		if appconfig.DevMode == "prod" {
+			fullFormUrl, err = url.Parse(constants.ProdFormUrl)
+		} else {
+			fullFormUrl, err = url.Parse(constants.DevFormUrl)
+		}
 		if err != nil {
 			fmt.Println("ERROR:", err.Error())
 			writer.WriteHeader(http.StatusInternalServerError)
@@ -221,12 +230,21 @@ func (constants *Constants) handleAPI(writer http.ResponseWriter, request *http.
 		}
 
 		queryParams := url.Values{}
-		queryParams.Add(constants.FormFields.DisplayName, review.Name)
-		queryParams.Add(constants.FormFields.FormattedName, review.FormattedName)
-		queryParams.Add(constants.FormFields.Deliciousness, stringDeliciousness)
-		queryParams.Add(constants.FormFields.Price, stringPrice)
-		queryParams.Add(constants.FormFields.Size, review.Size)
-		queryParams.Add(constants.FormFields.Group, groupIndex)
+		if appconfig.DevMode != "prod" {
+			queryParams.Add(constants.DevFormFields.DisplayName, review.Name)
+			queryParams.Add(constants.DevFormFields.FormattedName, review.FormattedName)
+			queryParams.Add(constants.DevFormFields.Deliciousness, stringDeliciousness)
+			queryParams.Add(constants.DevFormFields.Price, stringPrice)
+			queryParams.Add(constants.DevFormFields.Size, review.Size)
+			queryParams.Add(constants.DevFormFields.Group, groupIndex)
+		} else if appconfig.DevMode == "prod" {
+			queryParams.Add(constants.ProdFormFields.DisplayName, review.Name)
+			queryParams.Add(constants.ProdFormFields.FormattedName, review.FormattedName)
+			queryParams.Add(constants.ProdFormFields.Deliciousness, stringDeliciousness)
+			queryParams.Add(constants.ProdFormFields.Price, stringPrice)
+			queryParams.Add(constants.ProdFormFields.Size, review.Size)
+			queryParams.Add(constants.ProdFormFields.Group, groupIndex)
+		}
 		fullFormUrl.RawQuery = queryParams.Encode()
 
 		result, err := http.Post(fullFormUrl.String(), "application/json", nil)
