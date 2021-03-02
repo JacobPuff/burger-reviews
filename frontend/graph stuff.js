@@ -37,7 +37,11 @@ var main = async () => {
         }
         if (nameDict[d["formatted name"]] == undefined) {
             nameDict[d["formatted name"]] = Object.values(nameDict).length
-            data.push({...d, reviews: 1})
+            data.push({...d, reviews: 1, size: 0, sizeCount: 0})
+            if (SIZE_TO_NUM_MAP[d.size] != 0) {
+                data[data.length-1].sizeCount = 1
+                data[data.length-1].size = SIZE_TO_NUM_MAP[d.size]
+            }
             if (d['formatted name'] == "Mom's Cooking") {
                 data[data.length-1].reviews = "∞"
                 data[data.length-1].size = 5
@@ -46,11 +50,14 @@ var main = async () => {
             dataIndex = nameDict[d["formatted name"]]
             data[dataIndex].price = (data[dataIndex].price*data[dataIndex].reviews)+d.price;
             data[dataIndex].deliciousness = (data[dataIndex].deliciousness*data[dataIndex].reviews)+d.deliciousness
-            data[dataIndex].size = (data[dataIndex].size*data[dataIndex].reviews)+SIZE_TO_NUM_MAP[d.size]
             data[dataIndex].reviews += 1
             data[dataIndex].price /= data[dataIndex].reviews;
             data[dataIndex].deliciousness /= data[dataIndex].reviews;
-            data[dataIndex].size /= data[dataIndex].reviews;
+            if (SIZE_TO_NUM_MAP[d.size] != 0) {
+                data[dataIndex].size = (data[dataIndex].size*data[dataIndex].sizeCount)+SIZE_TO_NUM_MAP[d.size]
+                data[dataIndex].sizeCount += 1
+                data[dataIndex].size /= data[dataIndex].sizeCount;
+            }
         }
     })
 
