@@ -76,7 +76,7 @@ body {
 }
 
 
-input {
+.textInput {
     width: 180px;
     margin-left: 10px;
     margin-top: 5px;
@@ -90,7 +90,7 @@ input {
     border-left: 1px solid #0093bf;
 }
 
-select {
+.selectInput {
     width: 190px;
     margin-left: 10px;
     margin-top: 5px;

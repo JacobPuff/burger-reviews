@@ -19,16 +19,16 @@
                     <p class="inputTitle">Submit a review!</p>
                     <div class="inputSet">
                         <label for="burgerJointName" style="color: white;">Name of burger joint:</label>
-                        <input type="text" id="burgerJointName" name="burgerJointName"/>
+                        <input class="textInput" type="text" id="burgerJointName" name="burgerJointName"/>
                     </div>
                     <div class="inputSet">
                         <label for="burgerJointPrice" style="color: white;">Price of burger: </label>
                         <span style="font-size: 11px; margin-left: 20%;">(ex. 2.99)</span>
-                        <input type="text" id="burgerJointPrice" name="burgerJointPrice"/>
+                        <input class="textInput" type="text" id="burgerJointPrice" name="burgerJointPrice"/>
                     </div>
                     <div class="inputSet">
                         <label for="burgerJointBurgerSize" style="color: white;">Size of burger: </label>
-                        <select type="select" id="burgerJointBurgerSize" name="burgerJointBurgerSize">
+                        <select class="selectInput" id="burgerJointBurgerSize" name="burgerJointBurgerSize">
                             <option value="unknown">unknown</option>
                             <option value="less than 1/4 lbs">less than 1/4 lbs</option>
                             <option value="1/4 lbs">1/4 lbs</option>
@@ -42,7 +42,7 @@
                     </div>
                     <div class="inputSet">
                         <label for="burgerJointDeliciousness" style="color: white;">Deliciousness:</label>
-                    <input type="text" id="burgerJointDeliciousness" name="burgerJointDeliciousness"/>
+                        <input class="textInput" type="text" id="burgerJointDeliciousness" name="burgerJointDeliciousness"/>
                     </div>
                     <button class="submitButton" onclick="checkAndSubmitReview()">Submit</button>
                 </div>
